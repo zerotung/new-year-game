@@ -51,10 +51,35 @@ var canvasStage = {
     },
 
     initStage: function() {
-
         canvas.width = this.stageWidth;
         canvas.height = this.stageHeight; // 设置 canvas 的宽高
-        document.getElementById('canvas-stage').appendChild(canvas); // 添加 canvas
+        $('#canvas-stage').append(canvas); // 添加 canvas
+        // document.getElementById("canvas-stage").addEventListener("click", function() {
+        //     console.log('yes!')
+        // });
+        $('canvas').click(function(e) {
+            // console.log(e.pageX, e.pageY);
+            var bbox = canvas.getBoundingClientRect();
+            var x = e.pageX,
+                y = e.pageY;
+            x = Math.floor(x - bbox.left * (canvas.width / bbox.width));
+            y = Math.floor(y - bbox.top * (canvas.height / bbox.height));
+
+            // console.log(x, y)
+            ball.clickBall(x, y);
+        });
+        canvas.addEventListener('touchstart', function(e) {
+            var bbox = canvas.getBoundingClientRect();
+            var x = e.touches[0].clientX,
+                y = e.touches[0].clientY;
+            x = Math.floor(x - bbox.left * (canvas.width / bbox.width));
+            y = Math.floor(y - bbox.top * (canvas.height / bbox.height));
+
+            console.log(x, y)
+
+            // console.log(e.touches[0].clientX, e.touches[0].clientY)
+        });
+        ball.init();
     }
 }
 
@@ -66,13 +91,33 @@ var ball = {
     gravity: 10,
     r: 25,
 
+    init: function() {
+        this.posX = canvasStage.stageWidth / 2;
+        this.posY = canvasStage.stageHeight / 2;
+        this.speedX = 0;
+        this.speedY = -50;
+        this.gravity = 10;
+        this.r = 25;
+        this.render();
+    },
+
+    clickBall: function(x, y) {
+        if (((x - this.posX) ** 2 + (y - this.r - this.posY) ** 2) < ((this.r + 5) ** 2)) {
+            // console.log("in!")
+            this.speedY = -60;
+            this.speedX = Math.floor(((this.posX - x) / this.r) * 20)
+        } else {
+            console.log('out!')
+        }
+    },
+
     render: function() {
 
         cxt.clearRect(0, 0, canvasStage.stageWidth, canvasStage.stageHeight);
         cxt.fillStyle = "#FF0000";
         cxt.beginPath();
         cxt.arc(this.posX, this.posY, this.r, 0, Math.PI * 2, true);
-        console.log(this.speedY)
+        // console.log(this.speedY)
         cxt.closePath();
         cxt.fill();
     }
