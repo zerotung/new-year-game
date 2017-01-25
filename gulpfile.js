@@ -38,7 +38,6 @@ gulp.task('js', function() {
         .pipe(babel({
             presets: ['es2015']
         }))
-        .pipe(concat('bundle.js'))
         .pipe(uglify())
         .pipe(gulp.dest('dist/static'))
 })
