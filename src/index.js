@@ -19,6 +19,17 @@
 var canvas = document.createElement("canvas");
 var cxt = canvas.getContext("2d");
 
+var player = function() {
+    var score = 0;
+    return function() {
+        score += 1;
+        console.log(score);
+        $('#score').children('span').html(score);
+        return score;
+    }
+}
+var score = player();
+
 var stage = {
     width: document.body.clientWidth,
     height: document.body.clientHeight,
@@ -104,11 +115,28 @@ var ball = {
     clickBall: function(x, y) {
         if (((x - this.posX) ** 2 + (y - this.r - this.posY) ** 2) < ((this.r + 5) ** 2)) {
             // console.log("in!")
-            this.speedY = -60;
+            this.speedY = -70;
+            this.r -= score() % 3 == 0 ? 1 : 0;
+            console.log(this.r);
             this.speedX = Math.floor(((this.posX - x) / this.r) * 20)
         } else {
             console.log('out!')
         }
+    },
+
+    fly: function() {
+        this.posX = this.posX + this.speedX * 0.2;
+        this.posY = this.posY + this.speedY * 0.2 + 0.5 * this.gravity * 0.2;
+        if ((this.posY + this.r) > canvasStage.stageHeight) {
+            this.speedY = -this.speedY * 0.8;
+            this.posY = canvasStage.stageHeight - this.r;
+        }
+        if ((this.posX + this.r) > canvasStage.stageWidth || (this.posX - this.r) < 0) {
+            this.speedX = -this.speedX;
+        }
+        this.speedY = this.speedY + this.gravity * 0.2;
+
+        this.render();
     },
 
     render: function() {
@@ -125,23 +153,7 @@ var ball = {
 
 canvasStage.initStage();
 
-var ballFly = setInterval(function() {
 
-    ball.posX = ball.posX + ball.speedX * 0.2;
-    ball.posY = ball.posY + ball.speedY * 0.2 + 0.5 * ball.gravity * 0.2;
-    if ((ball.posY + ball.r) > canvasStage.stageHeight) {
-        ball.speedY = -ball.speedY * 0.8;
-        ball.posY = canvasStage.stageHeight - ball.r;
-    }
-    if ((ball.posX + ball.r) > canvasStage.stageWidth || (ball.posX - ball.r) < 0) {
-        ball.speedX = -ball.speedX;
-    }
-    ball.speedY = ball.speedY + ball.gravity * 0.2;
-    // if (Math.abs(ball.speedY) < 1 && ball.posY > canvasStage.stageHeight - ball.r * 1.1) {
-    //     clearInterval(ballFly);
-    // }
-    ball.render();
-}, 20);
 
 // $(document).ready(function() {
 //     console.log('网页可见区域宽：' + document.body.clientWidth);
