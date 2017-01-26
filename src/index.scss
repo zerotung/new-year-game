@@ -6,31 +6,115 @@ body, html {
     height: 100%;
 }
 
+p {
+    margin: 0;
+    padding: 0;
+}
+
 .stage {
     width: 100%;
     height: 100%;
+    background-color: #666;
 }
 
-#canvas-stage {
+#ready-page {
+
+    @at-root {
+
+        .title-box {
+            width: 100%;
+            position: absolute;
+            top: 150px;
+            font-size: 60px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .start-btn {
+
+            color: #fff;
+            font-size: 30px;
+            padding: 10px 20px;
+            border: 2px #fff solid;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+
+        .hint-box {
+            width: 100%;
+            position: absolute;
+            bottom: 150px;
+            font-size: 30px;
+            color: #fff;
+            text-align: center;
+        }
+    }
+}
+
+#game-page {
     width: 100%;
     height: 100%;
-    background-color: #666;
+    
     position: relative;
 
-    #score {
-        color: #fff;
-        font-size: 24px;
-        text-align: center;
-        padding-top: 30px;
+    @at-root {
+
+        .score {
+            color: #fff;
+            font-size: 40px;
+            text-align: center;
+            padding-top: 30px;
+        }
+
+        canvas {
+            background-color: #ff0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: block;
+        }
     }
 
-    canvas {
-        background-color: #ff0;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        display: block;
+}
+
+#end-page {
+    width: 100%;
+    height: 100%;
+    
+    position: relative;
+
+    @at-root {
+
+        .result-box {
+
+            color: #fff;
+
+            .result-text {
+                font-size: 40px;
+                text-align: center;
+                padding: 40px;
+            }
+
+            .result-num {
+                font-size: 200px;
+                text-align: center;
+            }
+        }
+
+        .restart-btn {
+
+            color: #fff;
+            font-size: 30px;
+            padding: 10px 20px;
+            border: 2px #fff solid;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
     }
 }
 

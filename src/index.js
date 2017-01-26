@@ -19,16 +19,16 @@
 var canvas = document.createElement("canvas");
 var cxt = canvas.getContext("2d");
 
-var player = function() {
-    var score = 0;
-    return function() {
-        score += 1;
-        console.log(score);
-        $('#score').children('span').html(score);
-        return score;
-    }
-}
-var score = player();
+// var player = function() {
+//     var score = 0;
+//     return function() {
+//         score += 1;
+//         console.log(score);
+//         document.getElementById('score').getElementsByTagName('span')[0].innerHTML = score;
+//         return score;
+//     }
+// }
+// var score = player();
 
 var stage = {
     width: document.body.clientWidth,
@@ -64,11 +64,12 @@ var canvasStage = {
     initStage: function() {
         canvas.width = this.stageWidth;
         canvas.height = this.stageHeight; // 设置 canvas 的宽高
-        $('#canvas-stage').append(canvas); // 添加 canvas
+        // document.getElementsByClassName('game-page')[0].appendChild(canvas); // 添加 canvas
         // document.getElementById("canvas-stage").addEventListener("click", function() {
         //     console.log('yes!')
         // });
-        $('canvas').click(function(e) {
+        // 
+        canvas.addEventListener('click', function(e) {
             // console.log(e.pageX, e.pageY);
             var bbox = canvas.getBoundingClientRect();
             var x = e.pageX,
@@ -86,11 +87,9 @@ var canvasStage = {
             x = Math.floor(x - bbox.left * (canvas.width / bbox.width));
             y = Math.floor(y - bbox.top * (canvas.height / bbox.height));
 
-            console.log(x, y)
-
             // console.log(e.touches[0].clientX, e.touches[0].clientY)
         });
-        ball.init();
+        // ball.init();
     }
 }
 
@@ -113,11 +112,11 @@ var ball = {
     },
 
     clickBall: function(x, y) {
-        if (((x - this.posX) ** 2 + (y - this.r - this.posY) ** 2) < ((this.r + 5) ** 2)) {
+        if (((x - this.posX) * (x - this.posX) + (y - this.r - this.posY) * (y - this.r - this.posY)) < ((this.r + 5) * (this.r + 5))) {
             // console.log("in!")
             this.speedY = -70;
-            this.r -= score() % 3 == 0 ? 1 : 0;
-            console.log(this.r);
+            player.gotScore();
+            this.r -= player.getScore() % 3 == 0 ? 1 : 0;
             this.speedX = Math.floor(((this.posX - x) / this.r) * 20)
         } else {
             console.log('out!')
@@ -127,9 +126,11 @@ var ball = {
     fly: function() {
         this.posX = this.posX + this.speedX * 0.2;
         this.posY = this.posY + this.speedY * 0.2 + 0.5 * this.gravity * 0.2;
-        if ((this.posY + this.r) > canvasStage.stageHeight) {
-            this.speedY = -this.speedY * 0.8;
-            this.posY = canvasStage.stageHeight - this.r;
+        if ((this.posY - this.r) > canvasStage.stageHeight) { // 超出屏幕范围
+            // this.speedY = -this.speedY * 0.8;
+            // this.posY = canvasStage.stageHeight - this.r;
+
+            player.end();
         }
         if ((this.posX + this.r) > canvasStage.stageWidth || (this.posX - this.r) < 0) {
             this.speedX = -this.speedX;
@@ -151,8 +152,121 @@ var ball = {
     }
 }
 
-canvasStage.initStage();
+function Player() {
+    this.state = 0;
+    var score = 0;
+    var ballState;
 
+    this.ready = function() {
+        var stage = document.getElementsByClassName('stage')[0];
+        if (stage.getElementsByTagName('div')[0]) {
+            stage.removeChild(stage.getElementsByTagName('div')[0]);
+        }
+
+        var readyDOM = document.createElement('div');
+        readyDOM.className = 'ready-page';
+        var titleBoxDOM = document.createElement('div');
+        titleBoxDOM.className = 'title-box';
+        titleBoxDOM.innerHTML = '接住小红球';
+        var hintBoxDOM = document.createElement('div');
+        hintBoxDOM.className = 'hint-box';
+        hintBoxDOM.innerHTML = '点击小球<br>防止小球掉落';
+
+        var startBtnDOM = document.createElement('div');
+        startBtnDOM.innerHTML = '开始游戏';
+        startBtnDOM.className = 'start-btn';
+
+        startBtnDOM.addEventListener('click', function() {
+            this.startGame();
+        }.bind(this));
+        startBtnDOM.addEventListener('touchstart', function() {
+            this.startGame();
+        }.bind(this));
+
+        readyDOM.appendChild(titleBoxDOM);
+        readyDOM.appendChild(startBtnDOM);
+        readyDOM.appendChild(hintBoxDOM);
+        stage.appendChild(readyDOM);
+
+    };
+
+    this.startGame = function() {
+        var stage = document.getElementsByClassName('stage')[0];
+        if (stage.getElementsByTagName('div')[0]) {
+            stage.removeChild(stage.getElementsByTagName('div')[0]);
+        }
+
+        score = 0; // 初始化分数
+
+        var gameDOM = document.createElement('div');
+        gameDOM.className = 'game-page';
+        var scoreBarDOM = document.createElement('div');
+        scoreBarDOM.className = 'score';
+        scoreBarDOM.innerHTML = 'score: ';
+        var scoreNumDOM = document.createElement('span');
+        scoreNumDOM.innerHTML = '0';
+        scoreBarDOM.appendChild(scoreNumDOM);
+        gameDOM.appendChild(scoreBarDOM);
+        stage.appendChild(gameDOM);
+        document.getElementsByClassName('game-page')[0].appendChild(canvas); // 添加 canvas
+
+        ball.init();
+
+        ballState = setInterval(function() {
+            ball.fly();
+        }, 20);
+
+    };
+
+    this.end = function() {
+        var stage = document.getElementsByClassName('stage')[0];
+        if (stage.getElementsByTagName('div')[0]) {
+            stage.removeChild(stage.getElementsByTagName('div')[0]);
+        }
+
+        clearInterval(ballState);
+
+        var endDOM = document.createElement('div');
+        endDOM.className = 'end-page';
+        var resultBoxDOM = document.createElement('div');
+        resultBoxDOM.className = 'result-box';
+        var resultTextDOM = document.createElement('p');
+        resultTextDOM.className = 'result-text';
+        resultTextDOM.innerHTML = 'YOUR SCORE';
+        var resultNumDOM = document.createElement('p');
+        resultNumDOM.className = 'result-num';
+
+        resultNumDOM.innerHTML = player.getScore() + '';
+        resultBoxDOM.appendChild(resultTextDOM);
+        resultBoxDOM.appendChild(resultNumDOM);
+
+        var restartBtnDOM = document.createElement('div');
+        restartBtnDOM.className = 'restart-btn';
+        restartBtnDOM.innerHTML = '重新开始';
+
+        restartBtnDOM.addEventListener('click', function() {
+            player.startGame();
+        });
+
+        endDOM.appendChild(resultBoxDOM);
+        endDOM.appendChild(restartBtnDOM);
+
+        stage.appendChild(endDOM);
+
+    };
+
+    this.gotScore = function() {
+        score += 1;
+        document.getElementsByClassName('score')[0].getElementsByTagName('span')[0].innerHTML = score;
+    }
+
+    this.getScore = function() {
+        return score;
+    }
+}
+canvasStage.initStage();
+var player = new Player();
+player.ready();
 
 
 // $(document).ready(function() {

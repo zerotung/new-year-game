@@ -3,7 +3,12 @@ var gulp = require('gulp'),
     babel = require('gulp-babel'),
     minifycss = require('gulp-minify-css'),
     concat = require('gulp-concat'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    postcss = require('gulp-postcss');
+var autoprefixer = require('autoprefixer');
+var cssnext = require('cssnext');
+var precss = require('precss');
+
 var browserSync = require('browser-sync').create()
 var reload = browserSync.reload
 
@@ -20,6 +25,7 @@ gulp.task('html', function() {
 gulp.task('css', function() {
 
     return gulp.src('src/*.css')
+        .pipe(postcss([autoprefixer, cssnext, precss]))
         .pipe(minifycss())
         .pipe(gulp.dest('dist/static'))
 })
@@ -28,6 +34,7 @@ gulp.task('sass', function() {
 
     return gulp.src('src/*.scss')
         .pipe(sass())
+        .pipe(postcss([autoprefixer, cssnext, precss]))
         .pipe(minifycss())
         .pipe(gulp.dest('dist/static'))
 })
@@ -48,8 +55,8 @@ gulp.task('dev', ['js:dev', 'css:dev', 'sass:dev', 'html:dev'], function() {
     browserSync.init({
         server: {
             baseDir: "./dist" // 设置服务器的根目录为 dist 目录
-        },
-        notify: false // 开启静默模式
+        }
+        // notify: false // 开启静默模式
     })
     gulp.watch('src/*.js', ['js:dev'])
     gulp.watch('src/*.scss', ['sass:dev'])
@@ -69,6 +76,7 @@ gulp.task('html:dev', function() {
 gulp.task('css:dev', function() {
 
     return gulp.src('src/*.css')
+        .pipe(postcss([autoprefixer, cssnext, precss]))
         .pipe(gulp.dest('dist/static'))
         .pipe(reload({
             stream: true
@@ -79,6 +87,7 @@ gulp.task('sass:dev', function() {
 
     return gulp.src('src/*.scss')
         .pipe(sass())
+        .pipe(postcss([autoprefixer, cssnext, precss]))
         .pipe(gulp.dest('dist/static'))
         .pipe(reload({
             stream: true
