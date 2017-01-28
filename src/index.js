@@ -84,12 +84,14 @@ var canvasStage = {
 var ball = {
 
     // 初始化小球的位置、速度、重力、半径
-    posX: canvasStage.stageWidth / 2,
-    posY: canvasStage.stageHeight / 2,
-    speedX: 20,
-    speedY: -50,
-    gravity: 10,
-    r: 25,
+    posX: canvasStage.stageWidth / 2, // x坐标
+    posY: canvasStage.stageHeight / 2, // y坐标
+    speedX: 20, // x速度
+    speedY: -50, // y速度
+    gravity: 10, // 重力
+    r: 30, // 半径
+    arc: 0, // 角度
+    w: 0, // 角速度
 
     // 将小球数据初始化
     init: function() {
@@ -98,7 +100,9 @@ var ball = {
         this.speedX = 0;
         this.speedY = -50;
         this.gravity = 10;
-        this.r = 25;
+        this.r = 30;
+        this.arc = 0;
+        this.w = 0;
         this.render();
     },
 
@@ -115,6 +119,7 @@ var ball = {
             this.r -= player.getScore() % 3 == 0 ? 1 : 0;
             // 小球在 x 方向的速度根据点击的横坐标与小球中心的横坐标相关
             this.speedX = Math.floor(((this.posX - x) / this.r) * 20)
+            this.w = Math.floor(((this.posX - x) / this.r) * 20)
         } else {
             console.log('out!')
         }
@@ -122,6 +127,10 @@ var ball = {
 
     // 小球下一状态的各个数据的改变
     fly: function() {
+
+        this.arc = this.arc + this.w;
+        this.arc = this.arc > 360 ? this.arc - 360 : this.arc;
+        this.arc = this.arc < 0 ? this.arc + 360 : this.arc;
 
         // x = x0 + v(x) * t
         this.posX = this.posX + this.speedX * 0.2;
@@ -156,12 +165,22 @@ var ball = {
         // 清空画布
         cxt.clearRect(0, 0, canvasStage.stageWidth, canvasStage.stageHeight);
 
-        // 画出小球
-        cxt.fillStyle = "#FF0000";
-        cxt.beginPath();
-        cxt.arc(this.posX, this.posY, this.r, 0, Math.PI * 2, true);
-        cxt.closePath();
-        cxt.fill();
+        // // 画出小球
+        // cxt.fillStyle = "#FF0000";
+        // cxt.beginPath();
+        // cxt.arc(this.posX, this.posY, this.r, 0, Math.PI * 2, true);
+        // cxt.closePath();
+        // cxt.fill();
+
+        var img = new Image();
+        img.src = "static/fu.png";
+        cxt.save();
+        cxt.translate(this.posX, this.posY);
+        cxt.rotate(this.arc * Math.PI / 180); //旋转47度
+        cxt.translate(-this.posX, -this.posY);
+        // cxt.drawImage(image1, xpos - image1.width / 2, ypos - image1.height / 2);
+        cxt.drawImage(img, this.posX - this.r, this.posY - this.r, this.r * 2, this.r * 2);
+        cxt.restore();
     }
 }
 
