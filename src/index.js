@@ -1,6 +1,10 @@
 var canvas = document.createElement("canvas");
 var cxt = canvas.getContext("2d");
 
+// 全局加载福袋图片 防止反复加载
+var img = new Image();
+img.src = "static/fu.png";
+
 var stage = {
 
     // 获取可视区域的宽高
@@ -172,11 +176,9 @@ var ball = {
         // cxt.closePath();
         // cxt.fill();
 
-        var img = new Image();
-        img.src = "static/fu.png";
         cxt.save();
         cxt.translate(this.posX, this.posY);
-        cxt.rotate(this.arc * Math.PI / 180); //旋转47度
+        cxt.rotate(this.arc * Math.PI / 180); // 选择arc度
         cxt.translate(-this.posX, -this.posY);
         // cxt.drawImage(image1, xpos - image1.width / 2, ypos - image1.height / 2);
         cxt.drawImage(img, this.posX - this.r, this.posY - this.r, this.r * 2, this.r * 2);
@@ -206,9 +208,9 @@ function Player() {
 
         readyDOM.className = 'ready-page';
         titleBoxDOM.className = 'title-box';
-        titleBoxDOM.innerHTML = '接住小红球';
+        titleBoxDOM.innerHTML = '接住福袋';
         hintBoxDOM.className = 'hint-box';
-        hintBoxDOM.innerHTML = '点击小球<br>防止小球掉落';
+        hintBoxDOM.innerHTML = '点击福袋<br>防止福袋掉落';
 
         startBtnDOM.innerHTML = '开始游戏';
         startBtnDOM.className = 'start-btn';
@@ -280,7 +282,7 @@ function Player() {
         resultTextDOM.innerHTML = 'YOUR SCORE';
         resultNumDOM.className = 'result-num';
 
-        resultNumDOM.innerHTML = player.getScore() + '';
+        resultNumDOM.innerHTML = this.getScore() + '';
         resultBoxDOM.appendChild(resultTextDOM);
         resultBoxDOM.appendChild(resultNumDOM);
 
@@ -288,8 +290,12 @@ function Player() {
         restartBtnDOM.innerHTML = '重新开始';
 
         restartBtnDOM.addEventListener('click', function() {
-            player.startGame();
-        });
+            this.startGame();
+        }.bind(this));
+        restartBtnDOM.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this.startGame();
+        }.bind(this));
 
         endDOM.appendChild(resultBoxDOM);
         endDOM.appendChild(restartBtnDOM);

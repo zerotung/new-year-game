@@ -24,18 +24,20 @@ p {
         .title-box {
             width: 100%;
             position: absolute;
-            top: 150px;
-            font-size: 60px;
+            top: 110px;
+            font-size: 50px;
             color: #fff;
             text-align: center;
         }
 
         .start-btn {
-
+            width: 150px;
+            text-align: center;
             color: #fff;
             font-size: 30px;
             padding: 10px 20px;
             border: 2px #fff solid;
+            border-radius: 25px;
             position: absolute;
             left: 50%;
             top: 50%;
@@ -45,8 +47,8 @@ p {
         .hint-box {
             width: 100%;
             position: absolute;
-            bottom: 150px;
-            font-size: 30px;
+            bottom: 120px;
+            font-size: 24px;
             color: #fff;
             text-align: center;
         }
@@ -106,14 +108,14 @@ p {
 
         .restart-btn {
 
+            width: 150px;
+            text-align: center;
             color: #fff;
             font-size: 30px;
             padding: 10px 20px;
             border: 2px #fff solid;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);
+            border-radius: 25px;
+            margin: 10px auto;
         }
     }
 }
