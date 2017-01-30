@@ -4,6 +4,7 @@ var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
+    imagemin = require('gulp-imagemin'),
     postcss = require('gulp-postcss');
 var autoprefixer = require('autoprefixer');
 var cssnext = require('cssnext');
@@ -39,13 +40,9 @@ gulp.task('sass', function() {
         .pipe(gulp.dest('dist/static'))
 })
 
-gulp.task('png', function() {
-    return gulp.src('src/*.png')
-        .pipe(gulp.dest('dist/static'))
-})
-
-gulp.task('jpg', function() {
-    return gulp.src('src/*.jpg')
+gulp.task('img', function() {
+    return gulp.src(['src/*.png', 'src/*.jpg'])
+        .pipe(imagemin())
         .pipe(gulp.dest('dist/static'))
 })
 
@@ -55,13 +52,14 @@ gulp.task('js', function() {
         .pipe(babel({
             presets: ['es2015']
         }))
+        .pipe(gulp.dest('dist/static'))
         .pipe(uglify())
         .pipe(gulp.dest('dist/static'))
 })
 
-gulp.task('build', ['sass', 'html', 'js', 'css', 'png', 'jpg'])
+gulp.task('build', ['sass', 'html', 'js', 'css', 'img'])
 
-gulp.task('dev', ['js:dev', 'css:dev', 'sass:dev', 'html:dev', 'png:dev', 'jpg:dev'], function() {
+gulp.task('dev', ['js:dev', 'css:dev', 'sass:dev', 'html:dev', 'img:dev'], function() {
     browserSync.init({
         server: {
             baseDir: "./dist" // 设置服务器的根目录为 dist 目录
@@ -104,13 +102,8 @@ gulp.task('sass:dev', function() {
         }))
 })
 
-gulp.task('png:dev', function() {
-    return gulp.src('src/*.png')
-        .pipe(gulp.dest('dist/static'))
-})
-
-gulp.task('jpg:dev', function() {
-    return gulp.src('src/*.jpg')
+gulp.task('img:dev', function() {
+    return gulp.src(['src/*.png', 'src/*.jpg'])
         .pipe(gulp.dest('dist/static'))
 })
 
