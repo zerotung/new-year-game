@@ -44,6 +44,11 @@ gulp.task('png', function() {
         .pipe(gulp.dest('dist/static'))
 })
 
+gulp.task('jpg', function() {
+    return gulp.src('src/*.jpg')
+        .pipe(gulp.dest('dist/static'))
+})
+
 gulp.task('js', function() {
 
     return gulp.src('src/*.js')
@@ -54,9 +59,9 @@ gulp.task('js', function() {
         .pipe(gulp.dest('dist/static'))
 })
 
-gulp.task('build', ['sass', 'html', 'js', 'css', 'png'])
+gulp.task('build', ['sass', 'html', 'js', 'css', 'png', 'jpg'])
 
-gulp.task('dev', ['js:dev', 'css:dev', 'sass:dev', 'html:dev', 'png:dev'], function() {
+gulp.task('dev', ['js:dev', 'css:dev', 'sass:dev', 'html:dev', 'png:dev', 'jpg:dev'], function() {
     browserSync.init({
         server: {
             baseDir: "./dist" // 设置服务器的根目录为 dist 目录
@@ -101,6 +106,11 @@ gulp.task('sass:dev', function() {
 
 gulp.task('png:dev', function() {
     return gulp.src('src/*.png')
+        .pipe(gulp.dest('dist/static'))
+})
+
+gulp.task('jpg:dev', function() {
+    return gulp.src('src/*.jpg')
         .pipe(gulp.dest('dist/static'))
 })
 
