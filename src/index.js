@@ -77,7 +77,7 @@ class Fu extends Ball {
             var vX = 10 * Math.sin(this.arc * Math.PI / 180); // 计算硬币的x轴速度
             var vY = this.speedY - 10 * Math.cos(this.arc * Math.PI / 180); // 计算硬币的y轴速度
             for (var i = 0; i < 4; i++) {
-                var coin = new Coin(posXRender, posYRender, vX, vY, 10, 0, 0);
+                var coin = new Coin(posXRender, posYRender, vX, vY, 12, 0, 10);
                 coins.push(coin);
             }
             this.speedX = Math.floor(((this.posX - x) / this.r) * 20);
@@ -107,6 +107,7 @@ class Coin extends Ball {
         super(posX, posY, speedX, speedY, r, arc, w);
         this.speedX = this.speedX - 20 + 40 * Math.random();
         this.speedY = this.speedY - 10 + 20 * Math.random();
+        this.img = imgObjs[Math.floor(Math.random() * imgObjs.length)];
     }
 
     outStage() {
@@ -122,8 +123,18 @@ var cxt = canvas.getContext("2d");
 // 全局加载福袋图片 防止反复加载
 var img = new Image();
 img.src = "static/fu.png";
+var imgObjs = [];
+
 var imgCoin = new Image();
 imgCoin.src = "static/coin.png";
+imgObjs.push(imgCoin);
+var imgDiamond = new Image();
+imgDiamond.src = "static/diamond.png";
+imgObjs.push(imgDiamond);
+var imgGold = new Image();
+imgGold.src = "static/gold.png";
+imgObjs.push(imgGold);
+
 // 预加载背景图
 var imgStage = new Image();
 imgStage.src = "static/bg.jpg";
@@ -228,7 +239,7 @@ var canvasStage = {
             cxt.rotate(coin.arc * Math.PI / 180); // 选择arc度
             cxt.translate(-coin.posX, -coin.posY);
             // cxt.drawImage(image1, xpos - image1.width / 2, ypos - image1.height / 2);
-            cxt.drawImage(imgCoin, coin.posX - coin.r, coin.posY - coin.r, coin.r * 2, coin.r * 2);
+            cxt.drawImage(coin.img, coin.posX - coin.r, coin.posY - coin.r, coin.r * 2, coin.r * 2);
             cxt.restore();
         })
     },

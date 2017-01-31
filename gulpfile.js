@@ -41,7 +41,7 @@ gulp.task('sass', function() {
 })
 
 gulp.task('img', function() {
-    return gulp.src(['src/*.png', 'src/*.jpg'])
+    return gulp.src('src/*.+(png|jpg)')
         .pipe(imagemin())
         .pipe(gulp.dest('dist/static'))
 })
@@ -103,7 +103,7 @@ gulp.task('sass:dev', function() {
 })
 
 gulp.task('img:dev', function() {
-    return gulp.src(['src/*.png', 'src/*.jpg'])
+    return gulp.src('src/*.+(png|jpg)')
         .pipe(gulp.dest('dist/static'))
 })
 
