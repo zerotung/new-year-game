@@ -46,6 +46,7 @@ class Ball {
         // 如果触碰左右边界
         if ((this.posX + this.r) > canvasStage.stageWidth || (this.posX - this.r) < 0) {
             // x 方向速度反向
+            this.posX = ((this.posX - this.r) < 0) ? (0 + this.r) : (canvasStage.stageWidth - this.r);
             this.speedX = -this.speedX;
         }
 
