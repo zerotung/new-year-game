@@ -9,14 +9,14 @@ class Ball {
         // this.initR = 30;
         // this.initArc = 0;
         // this.initW = 0;
-        this.initPosX = posX;
-        this.initPosY = posY;
-        this.initSpeedX = speedX;
-        this.initSpeedY = speedY;
-        this.initGravity = 10;
-        this.initR = r;
-        this.initArc = arc;
-        this.initW = w;
+        this.initPosX = posX; // 横坐标
+        this.initPosY = posY; // 纵坐标
+        this.initSpeedX = speedX; // 横向速度
+        this.initSpeedY = speedY; // 纵向速度
+        this.initGravity = 10; // 重力
+        this.initR = r; // 半径
+        this.initArc = arc; // 旋转角
+        this.initW = w; // 角速度
         this.init();
     }
 
@@ -35,6 +35,7 @@ class Ball {
     fly() {
 
         this.arc = this.arc + this.w;
+        // 将旋转角保持在 0°~360° 之间
         this.arc = this.arc > 360 ? this.arc - 360 : this.arc;
         this.arc = this.arc < 0 ? this.arc + 360 : this.arc;
 
@@ -45,8 +46,9 @@ class Ball {
 
         // 如果触碰左右边界
         if ((this.posX + this.r) > canvasStage.stageWidth || (this.posX - this.r) < 0) {
-            // x 方向速度反向
+            // 防止卡在边界上
             this.posX = ((this.posX - this.r) < 0) ? (0 + this.r) : (canvasStage.stageWidth - this.r);
+            // x 方向速度反向
             this.speedX = -this.speedX;
         }
 
@@ -65,38 +67,45 @@ class Fu extends Ball {
     clickFu(x, y) {
 
         // 判断点击是否在允许范围内
-        // 允许点击的位置在小球下方一个半径的距离 点击半径比小球半径大5像素
+        // 允许点击的位置在小球下方一个半径的距离
+        // 点击半径是小球半径的2倍
         if (((x - this.posX) * (x - this.posX) + (y - this.r - this.posY) * (y - this.r - this.posY)) < (this.r * this.r * 4)) {
             // 小球的获取向上 70 的速度
             this.speedY = -70;
             player.gotScore();
             // 玩家每得 3 分小球半径减小 1 像素
             this.r -= player.getScore() % 3 == 0 ? 1 : 0;
-            // 小球在 x 方向的速度根据点击的横坐标与小球中心的横坐标相关
+
+            // 生成飞出物品的初始值计算以及渲染
             var posXRender = this.posX + Math.sin(this.arc * Math.PI / 180) * this.r;
             var posYRender = this.posY - Math.cos(this.arc * Math.PI / 180) * this.r;
             var vX = 10 * Math.sin(this.arc * Math.PI / 180); // 计算硬币的x轴速度
             var vY = this.speedY - 10 * Math.cos(this.arc * Math.PI / 180); // 计算硬币的y轴速度
-            for (var i = 0; i < 4; i++) {
+            const BALLS = 4; // 飞出物体个数
+            for (var i = 0; i < BALLS; i++) {
                 var coin = new Coin(posXRender, posYRender, vX, vY, 12, 0, 10);
                 coins.push(coin);
             }
+
+            // 小球在 x 方向的速度根据点击的横坐标与小球中心的横坐标相关
             this.speedX = Math.floor(((this.posX - x) / this.r) * 20);
             this.w = Math.floor(((this.posX - x) / this.r) * 10);
         } else {
+            // 点击到允许范围外
             console.log('out!')
         }
     }
 
-    // 如果超出屏幕范围
+    // 如果福袋超出屏幕范围
     outStage() {
         if ((this.posY - this.r) > canvasStage.stageHeight) {
             // 如果是触到底边弹起则使用注释中的代码，且将判断条件中的 '-' 改为 '+'
             // this.speedY = -this.speedY * 0.8;
             // this.posY = canvasStage.stageHeight - this.r;
 
-            // 游戏结束
+            // 清空飞出物体
             coins = [];
+            // 游戏结束
             player.end();
         }
     }
@@ -113,7 +122,7 @@ class Coin extends Ball {
 
     outStage() {
         if ((this.posY - this.r) > canvasStage.stageHeight) {
-
+            // TODO: 在飞出物体飞出屏幕时将其从数组中移除
         }
     }
 }
@@ -124,8 +133,9 @@ var cxt = canvas.getContext("2d");
 // 全局加载福袋图片 防止反复加载
 var img = new Image();
 img.src = "static/fu.png";
-var imgObjs = [];
 
+// 加载三种飞出物体图片
+var imgObjs = [];
 var imgCoin = new Image();
 imgCoin.src = "static/coin.png";
 imgObjs.push(imgCoin);
@@ -227,7 +237,6 @@ var canvasStage = {
         cxt.translate(fu.posX, fu.posY);
         cxt.rotate(fu.arc * Math.PI / 180); // 选择arc度
         cxt.translate(-fu.posX, -fu.posY);
-        // cxt.drawImage(image1, xpos - image1.width / 2, ypos - image1.height / 2);
         cxt.drawImage(img, fu.posX - fu.r, fu.posY - fu.r, fu.r * 2, fu.r * 2);
         cxt.restore();
     },
